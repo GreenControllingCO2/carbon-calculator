@@ -5,81 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Personal Carbon Footprint Calculator</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f4f3;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      max-width: 600px;
-      width: 100%;
-    }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f3; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .container { max-width: 600px; width: 100%; }
     h1 { text-align: center; color: #2f5d50; }
-    .section {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      display: none; /* Sayfalar başlangıçta gizli */
-    }
-    .active { display: block; } /* Sadece aktif sayfa görünür */
-    
-    .progress-bar {
-      height: 8px;
-      background: #ddd;
-      border-radius: 4px;
-      margin-bottom: 20px;
-    }
-    .progress-fill {
-      height: 100%;
-      background: #2f5d50;
-      width: 50%;
-      border-radius: 4px;
-      transition: width 0.3s;
-    }
-
+    .section { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: none; }
+    .active { display: block; }
+    .progress-bar { height: 8px; background: #ddd; border-radius: 4px; margin-bottom: 20px; }
+    .progress-fill { height: 100%; background: #2f5d50; border-radius: 4px; transition: width 0.3s; }
     p { font-weight: bold; margin-top: 20px; color: #444; }
-    label {
-      display: block;
-      padding: 10px;
-      margin: 5px 0;
-      background: #f9f9f9;
-      border: 1px solid #eee;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+    label { display: block; padding: 10px; margin: 5px 0; background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; cursor: pointer; }
     label:hover { background: #eef2f1; }
-    input[type="radio"] { margin-right: 10px; }
-
-    .btn-container {
-      margin-top: 30px;
-      display: flex;
-      justify-content: space-between;
-    }
-    button {
-      padding: 12px 25px;
-      font-size: 16px;
-      background: #2f5d50;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover { background: #244a40; }
+    input[type="number"] { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+    .btn-container { margin-top: 30px; display: flex; justify-content: space-between; }
+    button { padding: 12px 25px; font-size: 16px; background: #2f5d50; color: white; border: none; border-radius: 6px; cursor: pointer; }
     button.secondary { background: #888; }
-
-    .result-box {
-      text-align: center;
-      padding: 20px;
-      background: #e8f5e9;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-    #totalResult { font-size: 1.5em; color: #2f5d50; }
+    .result-box { text-align: center; padding: 20px; background: #e8f5e9; border-radius: 8px; margin-top: 20px; }
+    #totalResult { font-size: 1.5em; color: #2f5d50; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -88,7 +29,7 @@
   <h1>CO₂ Calculator</h1>
 
   <div class="section active" id="step1">
-    <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 33%;"></div></div>
     <h2>Step 1: Shopping & Consumption</h2>
     
     <p>How often do you go shopping?</p>
@@ -101,50 +42,45 @@
     <label><input type="radio" name="tshirt" value="-0.02"> Cotton T-shirt (Europe)</label>
     <label><input type="radio" name="tshirt" value="-0.05"> Organic cotton (Europe)</label>
 
-    <p>What is important to you in a product?</p>
-    <label><input type="radio" name="product" value="0" checked> Durable and long-lasting</label>
-    <label><input type="radio" name="product" value="0.12"> I don’t really think about it</label>
-    <label><input type="radio" name="product" value="0.13"> Mainly cheap</label>
-
-    <p>You usually buy things:</p>
-    <label><input type="radio" name="buying" value="0" checked> Mostly second-hand</label>
-    <label><input type="radio" name="buying" value="0.14"> Sometimes new</label>
-    <label><input type="radio" name="buying" value="0.28"> Always new</label>
-
     <p>Do you own a motorized vehicle?</p>
     <label><input type="radio" name="vehicle" value="0" checked> No / I share</label>
     <label><input type="radio" name="vehicle" value="0.08"> Motorcycle / scooter</label>
     <label><input type="radio" name="vehicle" value="0.24"> Car</label>
 
     <div class="btn-container">
-      <span></span> <button onclick="nextStep(2)">Next: Nutrition ➔</button>
+      <span></span>
+      <button onclick="nextStep(2)">Next: Nutrition ➔</button>
     </div>
   </div>
 
   <div class="section" id="step2">
-    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 66%;"></div></div>
     <h2>Step 2: Nutrition</h2>
     
     <p>Gender</p>
-    <label><input type="radio" name="gender" value="0.24" checked> Male</label>
-    <label><input type="radio" name="gender" value="0.21"> Female</label>
-    <label><input type="radio" name="gender" value="0.22"> Divers</label>
+    <label><input type="radio" name="gender" value="0.24" id="g_male" checked> Male (Base 0.24)</label>
+    <label><input type="radio" name="gender" value="0.21" id="g_female"> Female (Base 0.21)</label>
+    <label><input type="radio" name="gender" value="0.22" id="g_divers"> Divers (Base 0.22)</label>
 
-    <p>Sports activity</p>
-    <label><input type="radio" name="sports" value="0" checked> No sports</label>
-    <label><input type="radio" name="sports" value="0.04"> Sometimes</label>
-    <label><input type="radio" name="sports" value="0.06"> Regular</label>
+    <p>Your Weight (kg)</p>
+    <input type="number" id="weight" value="70" min="0">
+    <small style="color: #666;">*Every 2 kg increases footprint by 0.01 tCO₂e</small>
+
+    <p>Food you buy</p>
+    <label><input type="radio" name="food" value="0" checked> Regional and seasonal</label>
+    <label><input type="radio" name="food" value="0.01"> Sometimes regional and seasonal</label>
+    <label><input type="radio" name="food" value="0.04"> Doesn't matter where it comes from</label>
+
+    <p>You are in the Fast food restaurants</p>
+    <label><input type="radio" name="fastfood" value="0" checked> Never</label>
+    <label><input type="radio" name="fastfood" value="0.02"> Sometimes</label>
+    <label><input type="radio" name="fastfood" value="0.07"> 2-3 times in a week</label>
+    <label><input type="radio" name="fastfood" value="0.13"> Everyday</label>
 
     <p>Diet preference</p>
     <label><input type="radio" name="diet" value="0" checked> Vegan</label>
     <label><input type="radio" name="diet" value="0.04"> Vegetarian</label>
     <label><input type="radio" name="diet" value="0.13"> Sometimes meat</label>
-    <label><input type="radio" name="diet" value="0.10"> Daily meat</label>
-
-    <p>Food you buy</p>
-    <label><input type="radio" name="food" value="0" checked> Regional & seasonal</label>
-    <label><input type="radio" name="food" value="0.01"> Sometimes regional</label>
-    <label><input type="radio" name="food" value="0.04"> Origin doesn’t matter</label>
 
     <div class="btn-container">
       <button class="secondary" onclick="nextStep(1)">Back</button>
@@ -167,26 +103,33 @@
 
 <script>
   function nextStep(step) {
-    // Tüm bölümleri gizle
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-    // Hedef bölümü göster
     if(step === 1) document.getElementById('step1').classList.add('active');
     if(step === 2) document.getElementById('step2').classList.add('active');
   }
 
   function calculateTotal() {
     let total = 0;
-    // Tüm seçili radio butonların değerlerini topla
-    const selectedOptions = document.querySelectorAll('input[type="radio"]:checked');
-    selectedOptions.forEach(option => {
-      total += parseFloat(option.value);
+
+    // 1. Radio buton değerlerini topla (Gender hariç hepsini direkt alıyoruz)
+    const selectors = ['shopping', 'tshirt', 'vehicle', 'food', 'fastfood', 'diet'];
+    selectors.forEach(name => {
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      if (selected) total += parseFloat(selected.value);
     });
 
-    // Sonuç ekranını göster
+    // 2. Cinsiyet Baz Değeri ve Kilo Hesaplaması
+    const genderBase = parseFloat(document.querySelector('input[name="gender"]:checked').value);
+    const weight = parseFloat(document.getElementById('weight').value) || 0;
+    
+    // Kilo etkisi: Her 2 kg için 0.01 tCO2e
+    const weightExtra = (weight / 2) * 0.01;
+    
+    total += genderBase + weightExtra;
+
+    // Sonucu göster
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('stepResult').classList.add('active');
-    
-    // Değeri ekrana yazdır (Sabit bir baz puan eklenebilir, şu an sadece girdileri topluyor)
     document.getElementById('totalResult').innerText = total.toFixed(2) + " t CO₂e";
   }
 </script>
