@@ -2,36 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Personal Carbon Footprint Calculator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7f6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f3;
       margin: 0;
       padding: 20px;
+      display: flex;
+      justify-content: center;
     }
-    h1, h2 {
-      color: #2f5d50;
+    .container {
+      max-width: 600px;
+      width: 100%;
     }
+    h1 { text-align: center; color: #2f5d50; }
     .section {
       background: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: none; /* Sayfalar başlangıçta gizli */
     }
+    .active { display: block; } /* Sadece aktif sayfa görünür */
+    
+    .progress-bar {
+      height: 8px;
+      background: #ddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #2f5d50;
+      width: 50%;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    p { font-weight: bold; margin-top: 20px; color: #444; }
     label {
       display: block;
-      margin: 6px 0;
+      padding: 10px;
+      margin: 5px 0;
+      background: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
     }
-    .result {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-top: 10px;
-      color: #1c3d35;
+    label:hover { background: #eef2f1; }
+    input[type="radio"] { margin-right: 10px; }
+
+    .btn-container {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
     }
     button {
-      padding: 10px 18px;
+      padding: 12px 25px;
       font-size: 16px;
       background: #2f5d50;
       color: white;
@@ -39,81 +69,127 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    button:hover {
-      background: #244a40;
+    button:hover { background: #244a40; }
+    button.secondary { background: #888; }
+
+    .result-box {
+      text-align: center;
+      padding: 20px;
+      background: #e8f5e9;
+      border-radius: 8px;
+      margin-top: 20px;
     }
+    #totalResult { font-size: 1.5em; color: #2f5d50; }
   </style>
 </head>
 <body>
 
-<h1>Carbon Footprint Calculator</h1>
+<div class="container">
+  <h1>CO₂ Calculator</h1>
 
-<!-- SHOPPING SECTION -->
-<div class="section">
-  <h2>Shopping & Consumption</h2>
+  <div class="section active" id="step1">
+    <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
+    <h2>Step 1: Shopping & Consumption</h2>
+    
+    <p>How often do you go shopping?</p>
+    <label><input type="radio" name="shopping" value="0" checked> Only when necessary</label>
+    <label><input type="radio" name="shopping" value="0.14"> Sometimes</label>
+    <label><input type="radio" name="shopping" value="0.28"> Often and always buy something</label>
 
-  <p><strong>How often do you go shopping?</strong></p>
-  <label><input type="radio" name="shopping" value="0" checked> Only when necessary</label>
-  <label><input type="radio" name="shopping" value="0.14"> Sometimes</label>
-  <label><input type="radio" name="shopping" value="0.28"> Often and always buy something</label>
+    <p>Which T-shirt would you choose?</p>
+    <label><input type="radio" name="tshirt" value="0" checked> Cotton T-shirt (Asia)</label>
+    <label><input type="radio" name="tshirt" value="-0.02"> Cotton T-shirt (Europe)</label>
+    <label><input type="radio" name="tshirt" value="-0.05"> Organic cotton (Europe)</label>
 
-  <p><strong>Which T-shirt would you choose?</strong></p>
-  <label><input type="radio" name="tshirt" value="0" checked> Cotton T-shirt (produced in Asia)</label>
-  <label><input type="radio" name="tshirt" value="-0.02"> Cotton T-shirt (produced in Europe)</label>
-  <label><input type="radio" name="tshirt" value="-0.05"> Organic cotton T-shirt (Europe)</label>
+    <p>What is important to you in a product?</p>
+    <label><input type="radio" name="product" value="0" checked> Durable and long-lasting</label>
+    <label><input type="radio" name="product" value="0.12"> I don’t really think about it</label>
+    <label><input type="radio" name="product" value="0.13"> Mainly cheap</label>
 
-  <p><strong>What is important to you in a product?</strong></p>
-  <label><input type="radio" name="product" value="0" checked> Durable and long-lasting</label>
-  <label><input type="radio" name="product" value="0.12"> I don’t really think about it</label>
-  <label><input type="radio" name="product" value="0.13"> Mainly cheap</label>
+    <p>You usually buy things:</p>
+    <label><input type="radio" name="buying" value="0" checked> Mostly second-hand</label>
+    <label><input type="radio" name="buying" value="0.14"> Sometimes new</label>
+    <label><input type="radio" name="buying" value="0.28"> Always new</label>
 
-  <p><strong>You usually buy things:</strong></p>
-  <label><input type="radio" name="buying" value="0" checked> Mostly second-hand</label>
-  <label><input type="radio" name="buying" value="0.14"> Sometimes new</label>
-  <label><input type="radio" name="buying" value="0.28"> Always new</label>
+    <p>Do you own a motorized vehicle?</p>
+    <label><input type="radio" name="vehicle" value="0" checked> No / I share</label>
+    <label><input type="radio" name="vehicle" value="0.08"> Motorcycle / scooter</label>
+    <label><input type="radio" name="vehicle" value="0.24"> Car</label>
 
-  <p><strong>Do you own a motorized vehicle?</strong></p>
-  <label><input type="radio" name="vehicle" value="0" checked> No / I share</label>
-  <label><input type="radio" name="vehicle" value="0.08"> Motorcycle / scooter</label>
-  <label><input type="radio" name="vehicle" value="0.24"> Car</label>
+    <div class="btn-container">
+      <span></span> <button onclick="nextStep(2)">Next: Nutrition ➔</button>
+    </div>
+  </div>
 
-  <div class="result" id="shoppingResult">Shopping CO₂e: 0.54 t</div>
+  <div class="section" id="step2">
+    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+    <h2>Step 2: Nutrition</h2>
+    
+    <p>Gender</p>
+    <label><input type="radio" name="gender" value="0.24" checked> Male</label>
+    <label><input type="radio" name="gender" value="0.21"> Female</label>
+    <label><input type="radio" name="gender" value="0.22"> Divers</label>
+
+    <p>Sports activity</p>
+    <label><input type="radio" name="sports" value="0" checked> No sports</label>
+    <label><input type="radio" name="sports" value="0.04"> Sometimes</label>
+    <label><input type="radio" name="sports" value="0.06"> Regular</label>
+
+    <p>Diet preference</p>
+    <label><input type="radio" name="diet" value="0" checked> Vegan</label>
+    <label><input type="radio" name="diet" value="0.04"> Vegetarian</label>
+    <label><input type="radio" name="diet" value="0.13"> Sometimes meat</label>
+    <label><input type="radio" name="diet" value="0.10"> Daily meat</label>
+
+    <p>Food you buy</p>
+    <label><input type="radio" name="food" value="0" checked> Regional & seasonal</label>
+    <label><input type="radio" name="food" value="0.01"> Sometimes regional</label>
+    <label><input type="radio" name="food" value="0.04"> Origin doesn’t matter</label>
+
+    <div class="btn-container">
+      <button class="secondary" onclick="nextStep(1)">Back</button>
+      <button onclick="calculateTotal()">Show Final Result</button>
+    </div>
+  </div>
+
+  <div class="section" id="stepResult">
+    <h2>Your Results</h2>
+    <div class="result-box">
+      <p>Estimated Annual Carbon Footprint:</p>
+      <div id="totalResult">0.00 t CO₂e</div>
+    </div>
+    <div class="btn-container">
+      <button onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+
 </div>
 
-<!-- NUTRITION SECTION -->
-<div class="section">
-  <h2>Nutrition</h2>
-  <p>
-    Physical activity, gender and body weight influence nutritional needs.
-    Your diet also has an impact on your CO₂ emissions.
-  </p>
+<script>
+  function nextStep(step) {
+    // Tüm bölümleri gizle
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    // Hedef bölümü göster
+    if(step === 1) document.getElementById('step1').classList.add('active');
+    if(step === 2) document.getElementById('step2').classList.add('active');
+  }
 
-  <p><strong>Gender</strong></p>
-  <label><input type="radio" name="gender" value="0.24" checked> Male</label>
-  <label><input type="radio" name="gender" value="0.21"> Female</label>
-  <label><input type="radio" name="gender" value="0.22"> Divers</label>
+  function calculateTotal() {
+    let total = 0;
+    // Tüm seçili radio butonların değerlerini topla
+    const selectedOptions = document.querySelectorAll('input[type="radio"]:checked');
+    selectedOptions.forEach(option => {
+      total += parseFloat(option.value);
+    });
 
-  <p><strong>Sports activity</strong></p>
-  <label><input type="radio" name="sports" value="0" checked> No sports</label>
-  <label><input type="radio" name="sports" value="0.04"> Sometimes</label>
-  <label><input type="radio" name="sports" value="0.06"> Regular</label>
+    // Sonuç ekranını göster
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById('stepResult').classList.add('active');
+    
+    // Değeri ekrana yazdır (Sabit bir baz puan eklenebilir, şu an sadece girdileri topluyor)
+    document.getElementById('totalResult').innerText = total.toFixed(2) + " t CO₂e";
+  }
+</script>
 
-  <p><strong>Diet preference</strong></p>
-  <label><input type="radio" name="diet" value="0" checked> Vegan</label>
-  <label><input type="radio" name="diet" value="0.04"> Vegetarian</label>
-  <label><input type="radio" name="diet" value="0.13"> Sometimes meat</label>
-  <label><input type="radio" name="diet" value="0.10"> Daily meat</label>
-
-  <p><strong>Food you buy</strong></p>
-  <label><input type="radio" name="food" value="0" checked> Regional & seasonal</label>
-  <label><input type="radio" name="food" value="0.01"> Sometimes regional</label>
-  <label><input type="radio" name="food" value="0.04"> Origin doesn’t matter</label>
-
-  <p><strong>Fast food consumption</strong></p>
-  <label><input type="radio" name="fastfood" value="0" checked> Never</label>
-  <label><input type="radio" name="fastfood" value="0.02"> Sometimes</label>
-  <label><input type="radio" name="fastfood" value="0.07"> 2–3 times a week</label>
-  <label><input type="radio" name="fastfood" value="0.13"> Every day</label>
-
-  <p><strong>Your weight (kg)</
-
+</body>
+</html>
