@@ -55,24 +55,27 @@
 
   <div class="section" id="step2">
     <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
-    <h2>Step 2: Nutrition</h2>
+    <h2>Step 2: Nutrition & Activity</h2>
     
-    <p>Gender (Base Value)</p>
-    <label><input type="radio" name="gender" value="0.24" checked> Male </label>
-    <label><input type="radio" name="gender" value="0.21"> Female </label>
-    <label><input type="radio" name="gender" value="0.22"> Divers </label>
+    <p>Gender</p>
+    <label><input type="radio" name="gender" value="0.24" checked> Male</label>
+    <label><input type="radio" name="gender" value="0.21"> Female</label>
+    <label><input type="radio" name="gender" value="0.22"> Divers</label>
 
     <p>Enter Your Weight (kg)</p>
-    <input type="number" id="weight" value="70" min="0" placeholder="e.g. 75">
-    <p style="font-size: 0.85em; font-weight: normal; color: #666; margin-top: 5px;">
-    </p>
+    <input type="number" id="weight" value="70" min="0">
+
+    <p>Sports Activity</p>
+    <label><input type="radio" name="sports" value="none" checked> No sports</label>
+    <label><input type="radio" name="sports" value="sometimes"> Sometimes</label>
+    <label><input type="radio" name="sports" value="regular"> Regular</label>
 
     <p>Food you buy</p>
     <label><input type="radio" name="food" value="0" checked> Regional and seasonal</label>
     <label><input type="radio" name="food" value="0.01"> Sometimes regional and seasonal</label>
     <label><input type="radio" name="food" value="0.04"> Doesn't matter where it comes from</label>
 
-    <p>You are in the Fast food restaurants</p>
+    <p>Fast food consumption</p>
     <label><input type="radio" name="fastfood" value="0" checked> Never</label>
     <label><input type="radio" name="fastfood" value="0.02"> Sometimes</label>
     <label><input type="radio" name="fastfood" value="0.07"> 2-3 times in a week</label>
@@ -110,44 +113,45 @@
   }
 
   function calculateTotal() {
-    let shoppingTotal = 0;
-    let nutritionTotal = 0;
+    let total = 0;
 
-    // Shopping Grubu Hesaplama
-    ['shopping', 'tshirt', 'vehicle'].forEach(name => {
-      const sel = document.querySelector(`input[name="${name}"]:checked`);
-      if (sel) shoppingTotal += parseFloat(sel.value);
+    // 1. Standart Seçimler (Shopping, Food, Fastfood, Diet)
+    const selectors = ['shopping', 'tshirt', 'vehicle', 'food', 'fastfood', 'diet'];
+    selectors.forEach(name => {
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      if (selected) total += parseFloat(selected.value);
     });
 
-    // Nutrition Grubu Hesaplama (Besin tercihleri)
-    ['food', 'fastfood', 'diet'].forEach(name => {
-      const sel = document.querySelector(`input[name="${name}"]:checked`);
-      if (sel) nutritionTotal += parseFloat(sel.value);
-    });
-
-    // KİLO VE CİNSİYET HESABI
-    // Cinsiyet baz değerini al (Erkek: 0.24, Kadın: 0.21, Divers: 0.22)
+    // 2. Cinsiyet Baz Değeri
     const genderBase = parseFloat(document.querySelector('input[name="gender"]:checked').value);
+    total += genderBase;
+
+    // 3. Kilo Hesaplaması (Her 2 kg için 0.01 tCO2e)
+    const weight = parseFloat(document.getElementById('weight').value) || 0;
+    total += (weight / 2) * 0.01;
+
+    // 4. Spor Hesaplaması (Cinsiyete duyarlı)
+    const selectedGender = document.querySelector('input[name="gender"]:checked').parentElement.textContent.trim();
+    const selectedSports = document.querySelector('input[name="sports"]:checked').value;
     
-    // Kilo değerini al
-    const weightInput = document.getElementById('weight').value;
-    const weight = parseFloat(weightInput) || 0;
+    let sportsImpact = 0;
+    if (selectedSports === 'sometimes') {
+      // Erkekse +0.04, Kadın/Divers ise +0.02
+      sportsImpact = selectedGender.includes("Male") ? 0.04 : 0.02;
+    } else if (selectedSports === 'regular') {
+      // Erkekse +0.06, Kadın/Divers ise +0.04
+      sportsImpact = selectedGender.includes("Male") ? 0.06 : 0.04;
+    }
+    // No sports (none) seçiliyse 0 kalır.
+    
+    total += sportsImpact;
 
-    // Kilo etkisi: Her 2 kg için 0.01 ekle
-    const weightImpact = (weight / 2) * 0.01;
-
-    // Final Toplam
-    const finalScore = shoppingTotal + nutritionTotal + genderBase + weightImpact;
-
-    // Sonuç ekranına geçiş
+    // Sonuç ekranını göster
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('stepResult').classList.add('active');
-    
-    // Sonucu yazdır
-    document.getElementById('totalResult').innerText = finalScore.toFixed(2) + " t CO₂e";
+    document.getElementById('totalResult').innerText = total.toFixed(2) + " t CO₂e";
   }
 </script>
 
 </body>
 </html>
-
