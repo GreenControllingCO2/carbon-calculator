@@ -23,6 +23,9 @@
     #totalResult { font-size: 2.2em; color: #2f5d50; font-weight: bold; }
     .hidden { display: none; }
     .smoke-detail { margin-top: 15px; padding: 15px; border-left: 4px solid #2f5d50; background: #fdfdfd; }
+    .smoke-bonus-box { margin-top: 15px; padding: 15px; border-radius: 8px; font-weight: normal; font-size: 0.95em; line-height: 1.4; }
+    .smoke-bonus-box.smoker { background: #fff3e0; border: 1px solid #ffb74d; color: #e65100; }
+    .smoke-bonus-box.non-smoker { background: #e1f5fe; border: 1px solid #4fc3f7; color: #01579b; }
     .recommendations p { font-weight: normal; }
   </style>
 </head>
@@ -37,8 +40,8 @@
     
     <p>How often do you go shopping?</p>
     <label><input type="radio" name="shopping_freq" value="0" checked> Only when necessary</label>
-    <label><input type="radio" name="shopping_freq" value="0.14"> Weekly</label>
-    <label><input type="radio" name="shopping_freq" value="0.28"> Monthly</label>
+    <label><input type="radio" name="shopping_freq" value="0.14"> Sometimes</label>
+    <label><input type="radio" name="shopping_freq" value="0.28"> Often</label>
 
     <p>What is important to you in a product?</p>
     <label><input type="radio" name="prod_quality" value="0" checked> Durability, it should last long</label>
@@ -95,7 +98,7 @@
     <label><input type="radio" name="food_origin" value="any"> Doesn't matter as long as it looks and tastes good</label>
 
     <p>5. Your Weight (kg)</p>
-    <input type="number" id="weight" value="0" min="10">
+    <input type="number" id="weight" value="70" min="10">
 
     <div class="btn-container">
       <button class="secondary" onclick="nextStep(1)">Back</button>
@@ -106,7 +109,7 @@
   <div class="section" id="step3">
     <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
     <h2>Step 3: Transportation</h2>
-    <p> In total, how many km do you travel for work (and back home), daily?</p>
+    <p>How many km do you travel in a normal week?</p>
     <div class="input-group"><span>On foot / Bicycle</span><input type="number" id="trans_foot" value="0"></div>
     <div class="input-group"><span>Bus / Train</span><input type="number" id="trans_bus" value="0"></div>
     <div class="input-group"><span>Scooter / Moped </span><input type="number" id="trans_moped" value="0"></div>
@@ -128,6 +131,8 @@
       <div id="totalResult">0.00 t CO₂e</div>
       <p style="font-size: 0.9em; color: #666; margin-top: 5px;">tonnes CO₂e / year</p>
     </div>
+
+    <div id="smokingFeedback" class="smoke-bonus-box"></div>
 
     <div id="breakdown" style="margin-top: 20px; text-align: left; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
       <h3 style="margin-top: 0; color: #2f5d50;">Category Breakdown:</h3>
@@ -211,8 +216,11 @@
       if (sel) scoreShopping += parseFloat(sel.value);
     });
 
-    // Smoking
-    scoreShopping += (parseFloat(document.getElementById('smoking_count').value) || 0) * 14 * 365 / 1000000;
+    // Smoking Calculation
+    const isSmoker = document.querySelector('input[name="do_smoke"]:checked').value === 'yes';
+    const cigCount = parseFloat(document.getElementById('smoking_count').value) || 0;
+    const smokingAnnualTons = (cigCount * 14 * 365 / 1000000);
+    scoreShopping += smokingAnnualTons;
 
     // 2. Nutrition
     const gender = document.querySelector('input[name="gender"]:checked').value;
@@ -240,6 +248,16 @@
 
     const totalScore = scoreShopping + scoreNutrition + scoreTransport;
 
+    // --- Dynamic Smoking Feedback Logic ---
+    const feedbackEl = document.getElementById('smokingFeedback');
+    if (isSmoker && cigCount > 0) {
+      feedbackEl.className = "smoke-bonus-box smoker";
+      feedbackEl.innerHTML = `🚬 <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualTons.toFixed(3)} tCO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually. Reducing your smoking can benefit both your health and the environment.`;
+    } else {
+      feedbackEl.className = "smoke-bonus-box non-smoker";
+      feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By not smoking, you are protecting both your health and the environment!Even someone who smokes just 10 cigarettes a day emits about 51 kg of CO₂ per year. By staying away from this habit, you are contributing to both your well-being and the planet.`;
+    }
+
     // Update Result Page
     document.getElementById('res_shopping').innerText = scoreShopping.toFixed(2);
     document.getElementById('res_nutrition').innerText = scoreNutrition.toFixed(2);
@@ -254,4 +272,3 @@
 </script>
 </body>
 </html>
-
