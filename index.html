@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Personal Carbon Footprint Calculator</title>
+  <title>CO2 Calculator - Advanced Nutrition</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; background: #f0f4f3; margin: 0; padding: 20px; display: flex; justify-content: center; }
-    .container { max-width: 600px; width: 100%; }
+    .container { max-width: 650px; width: 100%; }
     h1 { text-align: center; color: #2f5d50; }
     .section { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: none; }
     .active { display: block; }
@@ -31,20 +31,19 @@
   <div class="section active" id="step1">
     <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
     <h2>Step 1: Shopping & Consumption</h2>
-    
     <p>How often do you go shopping?</p>
     <label><input type="radio" name="shopping" value="0" checked> Only when necessary</label>
     <label><input type="radio" name="shopping" value="0.14"> Sometimes</label>
-    <label><input type="radio" name="shopping" value="0.28"> Often and always buy something</label>
+    <label><input type="radio" name="shopping" value="0.28"> Often</label>
 
     <p>Which T-shirt would you choose?</p>
-    <label><input type="radio" name="tshirt" value="0" checked> Cotton T-shirt (Asia)</label>
-    <label><input type="radio" name="tshirt" value="-0.02"> Cotton T-shirt (Europe)</label>
-    <label><input type="radio" name="tshirt" value="-0.05"> Organic cotton (Europe)</label>
+    <label><input type="radio" name="tshirt" value="0" checked> Cotton (Asia)</label>
+    <label><input type="radio" name="tshirt" value="-0.02"> Cotton (Europe)</label>
+    <label><input type="radio" name="tshirt" value="-0.05"> Organic (Europe)</label>
 
-    <p>Do you own a motorized vehicle?</p>
+    <p>Motorized Vehicle</p>
     <label><input type="radio" name="vehicle" value="0" checked> No / I share</label>
-    <label><input type="radio" name="vehicle" value="0.08"> Motorcycle / scooter</label>
+    <label><input type="radio" name="vehicle" value="0.08"> Motorcycle</label>
     <label><input type="radio" name="vehicle" value="0.24"> Car</label>
 
     <div class="btn-container">
@@ -57,38 +56,28 @@
     <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
     <h2>Step 2: Nutrition & Activity</h2>
     
-    <p>Gender</p>
-    <label><input type="radio" name="gender" value="0.24" checked> Male</label>
-    <label><input type="radio" name="gender" value="0.21"> Female</label>
-    <label><input type="radio" name="gender" value="0.22"> Divers</label>
+    <p>1. Gender</p>
+    <label><input type="radio" name="gender" value="male" checked> Male</label>
+    <label><input type="radio" name="gender" value="female"> Female</label>
+    <label><input type="radio" name="gender" value="divers"> Divers</label>
 
-    <p>Enter Your Weight (kg)</p>
-    <input type="number" id="weight" value="70" min="0">
+    <p>2. Diet Preference</p>
+    <label><input type="radio" name="diet" value="vegan" checked> Vegan</label>
+    <label><input type="radio" name="diet" value="vegetarian"> Vegetarian</label>
+    <label><input type="radio" name="diet" value="sometimes_meat"> Sometimes Meat</label>
+    <label><input type="radio" name="diet" value="daily_meat"> Daily Meat</label>
 
-    <p>Sports Activity</p>
-    <label><input type="radio" name="sports" value="none" checked> No sports</label>
-    <label><input type="radio" name="sports" value="sometimes"> Sometimes</label>
-    <label><input type="radio" name="sports" value="regular"> Regular</label>
+    <p>3. Sports Activity</p>
+    <label><input type="radio" name="sports" value="no" checked> No Sports</label>
+    <label><input type="radio" name="sports" value="little"> Little Sport</label>
+    <label><input type="radio" name="sports" value="regular"> Regular Sport</label>
 
-    <p>Food you buy</p>
-    <label><input type="radio" name="food" value="0" checked> Regional and seasonal</label>
-    <label><input type="radio" name="food" value="0.01"> Sometimes regional and seasonal</label>
-    <label><input type="radio" name="food" value="0.04"> Doesn't matter where it comes from</label>
-
-    <p>Fast food consumption</p>
-    <label><input type="radio" name="fastfood" value="0" checked> Never</label>
-    <label><input type="radio" name="fastfood" value="0.02"> Sometimes</label>
-    <label><input type="radio" name="fastfood" value="0.07"> 2-3 times in a week</label>
-    <label><input type="radio" name="fastfood" value="0.13"> Everyday</label>
-
-    <p>Diet preference</p>
-    <label><input type="radio" name="diet" value="0" checked> Vegan</label>
-    <label><input type="radio" name="diet" value="0.04"> Vegetarian</label>
-    <label><input type="radio" name="diet" value="0.13"> Sometimes meat</label>
+    <p>4. Your Weight (kg)</p>
+    <input type="number" id="weight" value="10" min="10">
 
     <div class="btn-container">
       <button class="secondary" onclick="nextStep(1)">Back</button>
-      <button onclick="calculateTotal()">Show Final Result</button>
+      <button onclick="calculateAdvancedTotal()">Show Final Result</button>
     </div>
   </div>
 
@@ -102,7 +91,6 @@
       <button onclick="location.reload()">Restart</button>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -112,44 +100,58 @@
     if(step === 2) document.getElementById('step2').classList.add('active');
   }
 
-  function calculateTotal() {
-    let total = 0;
+  // Veri Tablosu (Object Literal yapısı ile tabloyu koda aktardık)
+  const lookupTable = {
+    male: {
+      vegan: { base: 0, increase: { no: 0, little: 0, regular: 0 } },
+      vegetarian: { base: 0.33, increase: { no: 0.1, little: 0.11, regular: 0.12 } },
+      sometimes_meat: { base: 0.52, increase: { no: 0.09, little: 0.1, regular: 0.11 } },
+      daily_meat: { base: 0.54, increase: { no: 0.12, little: 0.13, regular: 0.14 } }
+    },
+    female: {
+      vegan: { base: 0, increase: { no: 0, little: 0, regular: 0 } },
+      vegetarian: { base: 0.33, increase: { no: 0.04, little: 0.05, regular: 0.06 } },
+      sometimes_meat: { base: 0.52, increase: { no: 0.06, little: 0.07, regular: 0.08 } },
+      daily_meat: { base: 0.54, increase: { no: 0.09, little: 0.1, regular: 0.11 } }
+    },
+    divers: {
+      vegan: { base: 0, increase: { no: 0, little: 0, regular: 0 } },
+      vegetarian: { base: 0.33, increase: { no: 0.04, little: 0.07, regular: 0.07 } },
+      sometimes_meat: { base: 0.52, increase: { no: 0.08, little: 0.09, regular: 0.1 } },
+      daily_meat: { base: 0.54, increase: { no: 0.09, little: 0.11, regular: 0.11 } }
+    }
+  };
 
-    // 1. Standart Seçimler (Shopping, Food, Fastfood, Diet)
-    const selectors = ['shopping', 'tshirt', 'vehicle', 'food', 'fastfood', 'diet'];
-    selectors.forEach(name => {
-      const selected = document.querySelector(`input[name="${name}"]:checked`);
-      if (selected) total += parseFloat(selected.value);
+  function calculateAdvancedTotal() {
+    let shoppingScore = 0;
+    ['shopping', 'tshirt', 'vehicle'].forEach(name => {
+      const sel = document.querySelector(`input[name="${name}"]:checked`);
+      if (sel) shoppingScore += parseFloat(sel.value);
     });
 
-    // 2. Cinsiyet Baz Değeri
-    const genderBase = parseFloat(document.querySelector('input[name="gender"]:checked').value);
-    total += genderBase;
-
-    // 3. Kilo Hesaplaması (Her 2 kg için 0.01 tCO2e)
+    // Seçimleri al
+    const gender = document.querySelector('input[name="gender"]:checked').value;
+    const diet = document.querySelector('input[name="diet"]:checked').value;
+    const sports = document.querySelector('input[name="sports"]:checked').value;
     const weight = parseFloat(document.getElementById('weight').value) || 0;
-    total += (weight / 2) * 0.01;
 
-    // 4. Spor Hesaplaması (Cinsiyete duyarlı)
-    const selectedGender = document.querySelector('input[name="gender"]:checked').parentElement.textContent.trim();
-    const selectedSports = document.querySelector('input[name="sports"]:checked').value;
-    
-    let sportsImpact = 0;
-    if (selectedSports === 'sometimes') {
-      // Erkekse +0.04, Kadın/Divers ise +0.02
-      sportsImpact = selectedGender.includes("Male") ? 0.04 : 0.02;
-    } else if (selectedSports === 'regular') {
-      // Erkekse +0.06, Kadın/Divers ise +0.04
-      sportsImpact = selectedGender.includes("Male") ? 0.06 : 0.04;
-    }
-    // No sports (none) seçiliyse 0 kalır.
-    
-    total += sportsImpact;
+    // Tablodan verileri çek
+    const data = lookupTable[gender][diet];
+    const baseValue = data.base;
+    const increaseRate = data.increase[sports];
 
-    // Sonuç ekranını göster
+    // Formül: Base + ((Kilo - 10) / 10 * Artış)
+    // İlk 10 kg base içindedir, sonrasındaki her 10 kg için artış eklenir.
+    let weightMultiplier = Math.floor((weight - 10) / 10);
+    if (weightMultiplier < 0) weightMultiplier = 0;
+
+    const nutritionScore = baseValue + (weightMultiplier * increaseRate);
+    const finalScore = shoppingScore + nutritionScore;
+
+    // Sonucu göster
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('stepResult').classList.add('active');
-    document.getElementById('totalResult').innerText = total.toFixed(2) + " t CO₂e";
+    document.getElementById('totalResult').innerText = finalScore.toFixed(2) + " t CO₂e";
   }
 </script>
 
