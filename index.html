@@ -19,10 +19,11 @@
     .btn-container { margin-top: 30px; display: flex; justify-content: space-between; }
     button { padding: 12px 25px; font-size: 16px; background: #2f5d50; color: white; border: none; border-radius: 6px; cursor: pointer; }
     button.secondary { background: #888; }
-    .result-box { text-align: center; padding: 30px; background: #e8f5e9; border-radius: 12px; border: 2px solid #2f5d50; }
+    .result-box { text-align: center; padding: 20px; background: #e8f5e9; border-radius: 12px; border: 2px solid #2f5d50; }
     #totalResult { font-size: 2.2em; color: #2f5d50; font-weight: bold; }
     .hidden { display: none; }
     .smoke-detail { margin-top: 15px; padding: 15px; border-left: 4px solid #2f5d50; background: #fdfdfd; }
+    .recommendations p { font-weight: normal; }
   </style>
 </head>
 <body>
@@ -71,7 +72,7 @@
   <div class="section" id="step2">
     <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
     <h2>Step 2: Nutrition & Activity</h2>
-    <p>Gender / Diet / Sports / Weight soruları buradadır...</p>
+    
     <p>1. Gender</p>
     <label><input type="radio" name="gender" value="male" checked> Male</label>
     <label><input type="radio" name="gender" value="female"> Female</label>
@@ -94,7 +95,7 @@
     <label><input type="radio" name="food_origin" value="any"> Doesn't matter as long as it looks and tastes good</label>
 
     <p>5. Your Weight (kg)</p>
-    <input type="number" id="weight" value="" min="10">
+    <input type="number" id="weight" value="70" min="10">
 
     <div class="btn-container">
       <button class="secondary" onclick="nextStep(1)">Back</button>
@@ -122,8 +123,40 @@
   </div>
 
   <div class="section" id="stepResult">
-    <h2>Result</h2>
-    <div class="result-box"><div id="totalResult">0.00 t CO₂e</div></div>
+    <h2>Your Carbon Footprint Result</h2>
+    <div class="result-box">
+      <div id="totalResult">0.00 t CO₂e</div>
+      <p style="font-size: 0.9em; color: #666; margin-top: 5px;">tonnes CO₂e / year</p>
+    </div>
+
+    <div id="breakdown" style="margin-top: 20px; text-align: left; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+      <h3 style="margin-top: 0; color: #2f5d50;">Category Breakdown:</h3>
+      <ul style="list-style: none; padding: 0;">
+        <li style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee;">
+          <span>Shopping & Consumption:</span> <span><span id="res_shopping">0.00</span> t</span>
+        </li>
+        <li style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee;">
+          <span>Nutrition:</span> <span><span id="res_nutrition">0.00</span> t</span>
+        </li>
+        <li style="display: flex; justify-content: space-between; padding: 5px 0;">
+          <span>Transportation:</span> <span><span id="res_transport">0.00</span> t</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="recommendations" style="margin-top: 30px; text-align: left; line-height: 1.6;">
+      <h3 style="color: #2f5d50; border-bottom: 2px solid #2f5d50; padding-bottom: 5px;">Tips for Improvement</h3>
+      
+      <p><strong>🌱 Your Lifestyle</strong><br>
+      Small everyday choices really add up. Buying only what you need, choosing durable products, and using second-hand items helps save resources. Even simple habits—like downloading music or videos on Wi-Fi instead of streaming on the go—can reduce unnecessary emissions. Talking about sustainability and checking product labels also helps make better choices.</p>
+      
+      <p><strong>🥗 Food & Nutrition</strong><br>
+      Food plays a big role in our climate impact. In Germany, food production and consumption account for 62% of methane and 79% of nitrous oxide emissions. Eating less meat and dairy, choosing seasonal and local food, or having a meat-free day once or twice a week can make a real difference.</p>
+      
+      <p><strong>🚶 Everyday Mobility</strong><br>
+      There’s not much to explain: private cars cause over 60% of road transport CO₂ emissions in Europe. Car-sharing, public transport, or simply walking and cycling can lower this number—especially since cars currently carry only 1.7 people on average.</p>
+    </div>
+
     <button onclick="location.reload()" style="width:100%; margin-top:20px;">Restart</button>
   </div>
 
@@ -133,6 +166,7 @@
   function nextStep(s) {
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('step' + s).classList.add('active');
+    window.scrollTo(0,0);
   }
 
   function toggleSmoking(show) {
@@ -167,16 +201,18 @@
   };
 
   function calculateFinal() {
-    let score = 0;
+    let scoreShopping = 0;
+    let scoreNutrition = 0;
+    let scoreTransport = 0;
 
-    // 1. Shopping & New Questions
+    // 1. Shopping & Consumption
     ['shopping_freq', 'prod_quality', 'buy_type', 'own_vehicle'].forEach(name => {
       const sel = document.querySelector(`input[name="${name}"]:checked`);
-      if (sel) score += parseFloat(sel.value);
+      if (sel) scoreShopping += parseFloat(sel.value);
     });
 
     // Smoking
-    score += (parseFloat(document.getElementById('smoking_count').value) || 0) * 14 * 365 / 1000000;
+    scoreShopping += (parseFloat(document.getElementById('smoking_count').value) || 0) * 14 * 365 / 1000000;
 
     // 2. Nutrition
     const gender = document.querySelector('input[name="gender"]:checked').value;
@@ -189,25 +225,32 @@
     let weightMult = Math.floor((weight - 10) / 10);
     if (weightMult < 0) weightMult = 0;
     
-    score += nData.base + (weightMult * nData.increase[sports]);
-    score += foodOriginTable[foodOrigin][sports];
+    scoreNutrition += nData.base + (weightMult * nData.increase[sports]);
+    scoreNutrition += foodOriginTable[foodOrigin][sports];
 
-    // 3. Transportation (Factor * KM *250 days)
+    // 3. Transportation (Factor * KM * 250 days)
     const w = 250;
-    score += (parseFloat(document.getElementById('trans_bus').value) || 0) * 0.000068 * w;
-    score += (Math.floor((parseFloat(document.getElementById('trans_moped').value) || 0) / 2)) * 0.000001 * w;
-    score += (parseFloat(document.getElementById('trans_ebike').value) || 0) * 0.000043 * w;
-    score += (parseFloat(document.getElementById('trans_motor').value) || 0) * 0.0001 * w;
-    score += (parseFloat(document.getElementById('trans_car').value) || 0) * 0.000194 * w;
-    score += (parseFloat(document.getElementById('trans_ecar').value) || 0) * 0.000091 * w;
-    score += (parseFloat(document.getElementById('trans_hybrid').value) || 0) * 0.0001 * w;
+    scoreTransport += (parseFloat(document.getElementById('trans_bus').value) || 0) * 0.000068 * w;
+    scoreTransport += (Math.floor((parseFloat(document.getElementById('trans_moped').value) || 0) / 2)) * 0.000001 * w;
+    scoreTransport += (parseFloat(document.getElementById('trans_ebike').value) || 0) * 0.000043 * w;
+    scoreTransport += (parseFloat(document.getElementById('trans_motor').value) || 0) * 0.0001 * w;
+    scoreTransport += (parseFloat(document.getElementById('trans_car').value) || 0) * 0.000194 * w;
+    scoreTransport += (parseFloat(document.getElementById('trans_ecar').value) || 0) * 0.000091 * w;
+    scoreTransport += (parseFloat(document.getElementById('trans_hybrid').value) || 0) * 0.0001 * w;
 
+    const totalScore = scoreShopping + scoreNutrition + scoreTransport;
+
+    // Update Result Page
+    document.getElementById('res_shopping').innerText = scoreShopping.toFixed(2);
+    document.getElementById('res_nutrition').innerText = scoreNutrition.toFixed(2);
+    document.getElementById('res_transport').innerText = scoreTransport.toFixed(2);
+    document.getElementById('totalResult').innerText = totalScore.toFixed(2) + " t CO₂e";
+
+    // Show Result Step
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('stepResult').classList.add('active');
-    document.getElementById('totalResult').innerText = score.toFixed(2) + " t CO₂e";
+    window.scrollTo(0,0);
   }
 </script>
 </body>
 </html>
-
-
