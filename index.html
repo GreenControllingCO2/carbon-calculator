@@ -37,8 +37,8 @@
     
     <p>How often do you go shopping?</p>
     <label><input type="radio" name="shopping_freq" value="0" checked> Only when necessary</label>
-    <label><input type="radio" name="shopping_freq" value="0.14"> Sometimes</label>
-    <label><input type="radio" name="shopping_freq" value="0.28"> Often</label>
+    <label><input type="radio" name="shopping_freq" value="0.14"> Weekly</label>
+    <label><input type="radio" name="shopping_freq" value="0.28"> Monthly</label>
 
     <p>What is important to you in a product?</p>
     <label><input type="radio" name="prod_quality" value="0" checked> Durability, it should last long</label>
@@ -95,7 +95,7 @@
     <label><input type="radio" name="food_origin" value="any"> Doesn't matter as long as it looks and tastes good</label>
 
     <p>5. Your Weight (kg)</p>
-    <input type="number" id="weight" value="70" min="10">
+    <input type="number" id="weight" value="0" min="10">
 
     <div class="btn-container">
       <button class="secondary" onclick="nextStep(1)">Back</button>
@@ -106,7 +106,7 @@
   <div class="section" id="step3">
     <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
     <h2>Step 3: Transportation</h2>
-    <p>How many km do you travel in a normal week?</p>
+    <p> In total, how many km do you travel for work (and back home), daily?</p>
     <div class="input-group"><span>On foot / Bicycle</span><input type="number" id="trans_foot" value="0"></div>
     <div class="input-group"><span>Bus / Train</span><input type="number" id="trans_bus" value="0"></div>
     <div class="input-group"><span>Scooter / Moped </span><input type="number" id="trans_moped" value="0"></div>
@@ -254,3 +254,4 @@
 </script>
 </body>
 </html>
+
