@@ -98,7 +98,7 @@
     <label><input type="radio" name="food_origin" value="any"> Doesn't matter as long as it looks and tastes good</label>
 
     <p>5. Your Weight (kg)</p>
-    <input type="number" id="weight" value="70" min="10">
+    <input type="number" id="weight" value="" min="10">
 
     <div class="btn-container">
       <button class="secondary" onclick="nextStep(1)">Back</button>
@@ -132,8 +132,6 @@
       <p style="font-size: 0.9em; color: #666; margin-top: 5px;">tonnes CO₂e / year</p>
     </div>
 
-    <div id="smokingFeedback" class="smoke-bonus-box"></div>
-
     <div id="breakdown" style="margin-top: 20px; text-align: left; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
       <h3 style="margin-top: 0; color: #2f5d50;">Category Breakdown:</h3>
       <ul style="list-style: none; padding: 0;">
@@ -153,7 +151,7 @@
       <h3 style="color: #2f5d50; border-bottom: 2px solid #2f5d50; padding-bottom: 5px;">Tips for Improvement</h3>
       
       <p><strong>🌱 Your Lifestyle</strong><br>
-      Small everyday choices really add up. Buying only what you need, choosing durable products, and using second-hand items helps save resources. Even simple habits—like downloading music or videos on Wi-Fi instead of streaming on the go—can reduce unnecessary emissions. Talking about sustainability and checking product labels also helps make better choices.</p>
+      Small everyday choices really add up. Buying only what you need, choosing durable products, and using second-hand items helps save resources. Even simple habits—like downloading music or videos on Wi-Fi instead of streaming on the go—can reduce unnecessary emissions.</p>
       
       <p><strong>🥗 Food & Nutrition</strong><br>
       Food plays a big role in our climate impact. In Germany, food production and consumption account for 62% of methane and 79% of nitrous oxide emissions. Eating less meat and dairy, choosing seasonal and local food, or having a meat-free day once or twice a week can make a real difference.</p>
@@ -161,7 +159,9 @@
       <p><strong>🚶 Everyday Mobility</strong><br>
       There’s not much to explain: private cars cause over 60% of road transport CO₂ emissions in Europe. Car-sharing, public transport, or simply walking and cycling can lower this number—especially since cars currently carry only 1.7 people on average.</p>
     </div>
-
+    
+ <div id="smokingFeedback" class="smoke-bonus-box"></div>
+    
     <button onclick="location.reload()" style="width:100%; margin-top:20px;">Restart</button>
   </div>
 
@@ -220,6 +220,7 @@
     const isSmoker = document.querySelector('input[name="do_smoke"]:checked').value === 'yes';
     const cigCount = parseFloat(document.getElementById('smoking_count').value) || 0;
     const smokingAnnualTons = (cigCount * 14 * 365 / 1000000);
+    const smokingAnnualKg = (cigCount * 14 * 365 / 1000); // 1,000,000 mg in kg
     scoreShopping += smokingAnnualTons;
 
     // 2. Nutrition
@@ -248,14 +249,14 @@
 
     const totalScore = scoreShopping + scoreNutrition + scoreTransport;
 
-    // --- Dynamic Smoking Feedback Logic ---
+    // --- Dynamic Smoking Feedback Logic (Converted to KG) ---
     const feedbackEl = document.getElementById('smokingFeedback');
     if (isSmoker && cigCount > 0) {
       feedbackEl.className = "smoke-bonus-box smoker";
-      feedbackEl.innerHTML = `🚬 <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualTons.toFixed(3)} tCO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually. Reducing your smoking can benefit both your health and the environment.`;
+      feedbackEl.innerHTML = `🚬 <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualKg.toFixed(2)} kg CO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually. Reducing your smoking can benefit both your health and the environment.`;
     } else {
       feedbackEl.className = "smoke-bonus-box non-smoker";
-      feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By not smoking, you are protecting both your health and the environment!Even someone who smokes just 10 cigarettes a day emits about 51 kg of CO₂ per year. By staying away from this habit, you are contributing to both your well-being and the planet.`;
+      feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By not smoking, you protect both the environment and your health! <strong>Did you know?</strong> Someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually. By staying smoke-free, you are making a positive impact on the planet.`;
     }
 
     // Update Result Page
