@@ -81,7 +81,7 @@
     <label><input type="radio" name="diet" value="vegan" checked> Vegan</label>
     <label><input type="radio" name="diet" value="vegetarian"> Vegetarian</label>
     <label><input type="radio" name="diet" value="sometimes_meat"> Sometimes Meat/Poultry/Fish</label>
-    <label><input type="radio" name="diet" value="daily_meat"> Meat/Poultry/Fish daily</label>
+    <label><input type="radio" name="diet" value="daily_meat"> Meat/Poultry/Fish Daily</label>
 
     <p>3. Sports Activity</p>
     <label><input type="radio" name="sports" value="no" checked> No Sports</label>
@@ -192,8 +192,8 @@
     score += nData.base + (weightMult * nData.increase[sports]);
     score += foodOriginTable[foodOrigin][sports];
 
-    // 3. Transportation (Factor * KM * 52 Weeks)
-    const w = 52;
+    // 3. Transportation (Factor * KM *250 days)
+    const w = 250;
     score += (parseFloat(document.getElementById('trans_bus').value) || 0) * 0.000068 * w;
     score += (Math.floor((parseFloat(document.getElementById('trans_moped').value) || 0) / 2)) * 0.000001 * w;
     score += (parseFloat(document.getElementById('trans_ebike').value) || 0) * 0.000043 * w;
@@ -209,4 +209,5 @@
 </script>
 </body>
 </html>
+
 
