@@ -15,12 +15,14 @@
     p { font-weight: bold; margin-top: 20px; color: #444; }
     label { display: block; padding: 10px; margin: 5px 0; background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; cursor: pointer; }
     label:hover { background: #eef2f1; }
-    input[type="number"] { width: 100%; padding: 12px; border-radius: 6px; border: 2px solid #2f5d50; box-sizing: border-box; font-size: 16px; }
+    input[type="number"] { width: 100%; padding: 12px; border-radius: 6px; border: 2px solid #2f5d50; box-sizing: border-box; font-size: 16px; margin-top: 10px; }
     .btn-container { margin-top: 30px; display: flex; justify-content: space-between; }
     button { padding: 12px 25px; font-size: 16px; background: #2f5d50; color: white; border: none; border-radius: 6px; cursor: pointer; }
     button.secondary { background: #888; }
     .result-box { text-align: center; padding: 20px; background: #e8f5e9; border-radius: 8px; margin-top: 20px; }
     #totalResult { font-size: 1.8em; color: #2f5d50; font-weight: bold; }
+    .hidden { display: none; }
+    .smoke-detail { margin-top: 15px; padding: 15px; border-left: 4px solid #2f5d50; background: #fdfdfd; }
   </style>
 </head>
 <body>
@@ -31,10 +33,21 @@
   <div class="section active" id="step1">
     <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
     <h2>Step 1: Shopping & Consumption</h2>
+    
     <p>How often do you go shopping?</p>
     <label><input type="radio" name="shopping" value="0" checked> Only when necessary</label>
     <label><input type="radio" name="shopping" value="0.14"> Sometimes</label>
     <label><input type="radio" name="shopping" value="0.28"> Often</label>
+
+    <p>Do you smoke?</p>
+    <label><input type="radio" name="do_smoke" value="no" checked onclick="toggleSmoking(false)"> No</label>
+    <label><input type="radio" name="do_smoke" value="yes" onclick="toggleSmoking(true)"> Yes</label>
+
+    <div id="smoking_input_container" class="hidden smoke-detail">
+      <p>How many cigarettes do you smoke daily?</p>
+      <input type="number" id="smoking_count" value="0" min="0">
+      <p style="font-size: 0.8em; font-weight: normal; color: #666;">*Each cigarette contributes approx. 14g CO₂e</p>
+    </div>
 
     <p>Which T-shirt would you choose?</p>
     <label><input type="radio" name="tshirt" value="0" checked> Cotton (Asia)</label>
@@ -78,7 +91,7 @@
     <label><input type="radio" name="food_origin" value="any"> Doesn't matter where it comes from</label>
 
     <p>5. Your Weight (kg)</p>
-    <input type="number" id="weight" value="e.g.60" min="10">
+    <input type="number" id="weight" value="" min="10">
 
     <div class="btn-container">
       <button class="secondary" onclick="nextStep(1)">Back</button>
@@ -105,7 +118,16 @@
     if(step === 2) document.getElementById('step2').classList.add('active');
   }
 
-  // Beslenme ve Kilo Artış Tablosu
+  function toggleSmoking(show) {
+    const container = document.getElementById('smoking_input_container');
+    if (show) {
+      container.classList.remove('hidden');
+    } else {
+      container.classList.add('hidden');
+      document.getElementById('smoking_count').value = 0; // No denirse sıfırla
+    }
+  }
+
   const nutritionTable = {
     male: {
       vegan: { base: 0, increase: { no: 0, little: 0, regular: 0 } },
@@ -127,7 +149,6 @@
     }
   };
 
-  // Gıda Alışveriş Tercihi Tablosu (Spor bazlı)
   const foodOriginTable = {
     regional: { no: 0, little: 0, regular: 0 },
     sometimes: { no: 0.07, little: 0.08, regular: 0.11 },
@@ -137,20 +158,24 @@
   function calculateAdvancedTotal() {
     let totalScore = 0;
 
-    // 1. Alışveriş Bölümü
+    // 1. Standart Alışveriş Seçimleri
     ['shopping', 'tshirt', 'vehicle'].forEach(name => {
       const sel = document.querySelector(`input[name="${name}"]:checked`);
       if (sel) totalScore += parseFloat(sel.value);
     });
 
-    // 2. Seçimleri al
+    // 2. Sigara Hesaplama (14g * Adet * 365 / 1,000,000)
+    const smokingCount = parseFloat(document.getElementById('smoking_count').value) || 0;
+    const smokingAnnual = (smokingCount * 14 * 365) / 1000000;
+    totalScore += smokingAnnual;
+
+    // 3. Nutrition Verileri
     const gender = document.querySelector('input[name="gender"]:checked').value;
     const diet = document.querySelector('input[name="diet"]:checked').value;
     const sports = document.querySelector('input[name="sports"]:checked').value;
     const foodOrigin = document.querySelector('input[name="food_origin"]:checked').value;
     const weight = parseFloat(document.getElementById('weight').value) || 10;
 
-    // 3. Beslenme & Kilo Hesabı
     const nData = nutritionTable[gender][diet];
     const baseValue = nData.base;
     const weightIncreaseRate = nData.increase[sports];
@@ -158,14 +183,10 @@
     let weightMultiplier = Math.floor((weight - 10) / 10);
     if (weightMultiplier < 0) weightMultiplier = 0;
     
-    const nutritionResult = baseValue + (weightMultiplier * weightIncreaseRate);
-    totalScore += nutritionResult;
+    totalScore += baseValue + (weightMultiplier * weightIncreaseRate);
+    totalScore += foodOriginTable[foodOrigin][sports];
 
-    // 4. Gıda Alışveriş Tercihi Hesabı (Yeni tablo)
-    const foodOriginScore = foodOriginTable[foodOrigin][sports];
-    totalScore += foodOriginScore;
-
-    // Sonucu göster
+    // Final Sonucu Yazdır
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('stepResult').classList.add('active');
     document.getElementById('totalResult').innerText = totalScore.toFixed(2) + " t CO₂e";
@@ -174,4 +195,3 @@
 
 </body>
 </html>
-
