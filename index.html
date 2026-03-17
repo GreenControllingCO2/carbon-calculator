@@ -260,7 +260,7 @@
     const feedbackEl = document.getElementById('smokingFeedback');
     if (isSmoker && cigCount > 0) {
       feedbackEl.className = "smoke-bonus-box smoker";
-      feedbackEl.innerHTML = `? <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualKg.toFixed(2)} kg CO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually.`;
+      feedbackEl.innerHTML = `✨ <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualKg.toFixed(2)} kg CO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually.`;
     } else {
       feedbackEl.className = "smoke-bonus-box non-smoker";
       feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By staying smoke-free, you are making a positive impact on the planet.`;
