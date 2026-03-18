@@ -151,28 +151,11 @@
         </li>
       </ul>
     </div>
-                // Dynamic Smoking Feedback
-       <div id="smokingFeedback" class="smoke-bonus-box"></div>
-    const feedbackEl = document.getElementById('smokingFeedback');
-    if (isSmoker && cigCount > 0) {
-      feedbackEl.className = "smoke-bonus-box smoker";
-      feedbackEl.innerHTML = `✨ <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualKg.toFixed(2)} kg CO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually.`;
-    } else {
-      feedbackEl.className = "smoke-bonus-box non-smoker";
-      feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By staying smoke-free, you are making a positive impact on the planet.`;
-    }
+    <div id="smokingFeedback" class="smoke-bonus-box"></div>
+    
     <div class="recommendations" style="margin-top: 30px; text-align: left; line-height: 1.6;">
       <h3 style="color: #2f5d50; border-bottom: 2px solid #2f5d50; padding-bottom: 5px;">Tips for Improvement</h3>
-            // Dynamic Smoking Feedback
-       <div id="smokingFeedback" class="smoke-bonus-box"></div>
-    const feedbackEl = document.getElementById('smokingFeedback');
-    if (isSmoker && cigCount > 0) {
-      feedbackEl.className = "smoke-bonus-box smoker";
-      feedbackEl.innerHTML = `✨ <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualKg.toFixed(2)} kg CO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually.`;
-    } else {
-      feedbackEl.className = "smoke-bonus-box non-smoker";
-      feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By staying smoke-free, you are making a positive impact on the planet.`;
-    }
+      
       <p><strong>🌱 Your Lifestyle</strong><br>
       Small everyday choices really add up. Buying only what you need, choosing durable products, and using second-hand items helps save resources. Even simple habits—like downloading music or videos on Wi-Fi instead of streaming on the go—can reduce unnecessary emissions.</p>
       
@@ -271,7 +254,15 @@
     scoreTransport += (parseFloat(document.getElementById('trans_hybrid').value) || 0) * 0.0001 * w;
 
     const totalScore = scoreShopping + scoreNutrition + scoreTransport;
-
+// --- Dynamic Smoking Feedback ---
+    const feedbackEl = document.getElementById('smokingFeedback');
+    if (isSmoker && cigCount > 0) {
+      feedbackEl.className = "smoke-bonus-box smoker";
+      feedbackEl.innerHTML = `🚬 <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualKg.toFixed(2)} kg CO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually.`;
+    } else {
+      feedbackEl.className = "smoke-bonus-box non-smoker";
+      feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By staying smoke-free, you are making a positive impact on the planet! <strong>Did you know?</strong> Someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually.`;
+    }
     // Update Result Page
     document.getElementById('res_shopping').innerText = scoreShopping.toFixed(2);
     document.getElementById('res_nutrition').innerText = scoreNutrition.toFixed(2);
