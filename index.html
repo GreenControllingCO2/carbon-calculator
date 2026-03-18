@@ -151,6 +151,16 @@
         </li>
       </ul>
     </div>
+                // Dynamic Smoking Feedback
+       <div id="smokingFeedback" class="smoke-bonus-box"></div>
+    const feedbackEl = document.getElementById('smokingFeedback');
+    if (isSmoker && cigCount > 0) {
+      feedbackEl.className = "smoke-bonus-box smoker";
+      feedbackEl.innerHTML = `✨ <strong>Smoking:</strong> Since you smoke ${cigCount} cigarettes per day, you emit approximately <strong>${smokingAnnualKg.toFixed(2)} kg CO₂</strong> per year. For comparison, someone who smokes 10 cigarettes a day releases about 51 kg of CO₂ annually.`;
+    } else {
+      feedbackEl.className = "smoke-bonus-box non-smoker";
+      feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By staying smoke-free, you are making a positive impact on the planet.`;
+    }
     <div class="recommendations" style="margin-top: 30px; text-align: left; line-height: 1.6;">
       <h3 style="color: #2f5d50; border-bottom: 2px solid #2f5d50; padding-bottom: 5px;">Tips for Improvement</h3>
             // Dynamic Smoking Feedback
