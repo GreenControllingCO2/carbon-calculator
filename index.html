@@ -151,8 +151,10 @@
         </li>
       </ul>
     </div>
-
-        // Dynamic Smoking Feedback
+    <div class="recommendations" style="margin-top: 30px; text-align: left; line-height: 1.6;">
+      <h3 style="color: #2f5d50; border-bottom: 2px solid #2f5d50; padding-bottom: 5px;">Tips for Improvement</h3>
+            // Dynamic Smoking Feedback
+       <div id="smokingFeedback" class="smoke-bonus-box"></div>
     const feedbackEl = document.getElementById('smokingFeedback');
     if (isSmoker && cigCount > 0) {
       feedbackEl.className = "smoke-bonus-box smoker";
@@ -161,9 +163,6 @@
       feedbackEl.className = "smoke-bonus-box non-smoker";
       feedbackEl.innerHTML = `✨ <strong>Congratulations:</strong> By staying smoke-free, you are making a positive impact on the planet.`;
     }
-    <div class="recommendations" style="margin-top: 30px; text-align: left; line-height: 1.6;">
-      <h3 style="color: #2f5d50; border-bottom: 2px solid #2f5d50; padding-bottom: 5px;">Tips for Improvement</h3>
-      
       <p><strong>🌱 Your Lifestyle</strong><br>
       Small everyday choices really add up. Buying only what you need, choosing durable products, and using second-hand items helps save resources. Even simple habits—like downloading music or videos on Wi-Fi instead of streaming on the go—can reduce unnecessary emissions.</p>
       
@@ -173,8 +172,6 @@
       <p><strong>🚶 Everyday Mobility</strong><br>
       There’s not much to explain: private cars cause over 60% of road transport CO₂ emissions in Europe. Car-sharing, public transport, or simply walking and cycling can lower this number—especially since cars currently carry only 1.7 people on average.</p>
     </div>
-    
- <div id="smokingFeedback" class="smoke-bonus-box"></div>
     
     <button onclick="location.reload()" style="width:100%; margin-top:20px;">Restart</button>
   </div>
